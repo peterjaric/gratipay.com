@@ -64,6 +64,7 @@ suppress_sidebar = not(team.is_approved or user.ADMIN)
 {% endblock %}
 
 {% block sidebar %}
+
 {% if user.ADMIN %}
 <form id="status-knob" action="set-status.json">
     <select name="status">
@@ -81,9 +82,23 @@ suppress_sidebar = not(team.is_approved or user.ADMIN)
     <br>
 </form>
 {% endif %}
-{% if team.is_approved %}
-{% include "templates/your-payment.html" %}
+
+{% if user.participant == team.owner or user.ADMIN %}
+    {% set current_page = request.path.raw.split('/')[2] %}
+    {% set nav_base = '/' + team.slug %}
+    {% set pages = [ ('/',            _('Profile'))
+                   , ('/receiving/',  _('Receiving'))
+                    ] %}
+    {% if pages %}
+    {% include "templates/nav.html" %}
+    <br>
+    {% endif %}
 {% endif %}
+
+{% if (user.participant.username != team.owner) and team.is_approved %}
+    {% include "templates/your-payment.html" %}
+{% endif %}
+
 {% endblock %}
 
 {% block content %}
