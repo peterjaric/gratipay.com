@@ -148,7 +148,7 @@ class Team(Model):
 
     def get_upcoming_payment(self):
         return self.db.one("""
-            SELECT SUM(amount + due)
+            SELECT COALESCE(SUM(amount + due), 0)
               FROM current_payment_instructions cpi
               JOIN participants p ON cpi.participant = p.username
              WHERE team = %(slug)s
